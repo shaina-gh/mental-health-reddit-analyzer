@@ -61,3 +61,6 @@ mac_commands.txt
 *api*key*
 *secret*
 *token*
+
+# Ignore the data output folder
+data/
