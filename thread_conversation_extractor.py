@@ -6,11 +6,10 @@ import time
 from datetime import datetime
 import os
 # from config import REDDIT_CONFIG
-
 class ThreadConversationExtractor:
-    def __init__(self, reddit_config): # It now receives the config as an argument
+    # This class now receives the Reddit credentials when it's created
+    def __init__(self, reddit_config):
         """Initialize Reddit thread extractor"""
-        # It uses the passed-in config to connect to Reddit
         self.reddit = praw.Reddit(**reddit_config)
         self.target_subreddits = [
             'depression', 'anxiety', 'mentalhealth', 'bipolar', 
