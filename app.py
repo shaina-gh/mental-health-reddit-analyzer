@@ -10,23 +10,27 @@ from thread_conversation_extractor import ThreadConversationExtractor
 # --- Page Configuration ---
 st.set_page_config(page_title="Mental Health Analyzer", layout="wide")
 
-# --- Model & Extractor Loading (Cached for performance) ---
+# --- Model Loading (with caching for performance) ---
 @st.cache_resource
 def load_sentiment_model():
-    model_path = "./my_custom_mental_health_model"
-    if not os.path.exists(model_path):
-        return None
+    # --- FINAL FIX: Use the correct model ID from your Hugging Face Hub ---
+    model_id = "shaina05/mental-health-sentiment-analyzer"
+    
     try:
-        tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
-        model = AutoModelForSequenceClassification.from_pretrained(model_path, local_files_only=True)
+        # Load the model directly from the Hub
+        tokenizer = AutoTokenizer.from_pretrained(model_id)
+        model = AutoModelForSequenceClassification.from_pretrained(model_id)
         return pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
     except Exception as e:
-        st.sidebar.error(f"Error loading model: {e}")
+        # Provide a very clear error message if loading fails
+        st.sidebar.error(f"Fatal Error: Could not load model '{model_id}' from the Hub.")
+        st.sidebar.error("Please ensure the model repository is set to PUBLIC on your Hugging Face profile.")
+        st.sidebar.error(f"Details: {e}")
         return None
 
 sentiment_pipeline = load_sentiment_model()
 
-# --- Main App UI ---
+# --- Main App Structure ---
 st.title("🧠 Mental Health Reddit Analyzer")
 st.sidebar.title("Controls")
 
@@ -39,9 +43,8 @@ if cols[0].button("📈 Recent Activity Monitor"):
 if cols[1].button("📖 On-Demand Explorer"):
     st.session_state.active_tab = "📖 On-Demand Explorer"
 
-# ==============================================================================
-#                             TAB 1: RECENT ACTIVITY MONITOR
-# ==============================================================================
+# (The rest of the app.py code is the same as the last working version)
+# ...
 if st.session_state.active_tab == "📈 Recent Activity Monitor":
     st.sidebar.header("Recent Activity")
     st.sidebar.info("This dashboard automatically refreshes with the latest comments.")
@@ -52,7 +55,6 @@ if st.session_state.active_tab == "📈 Recent Activity Monitor":
 
     if not st.session_state.recent_comments:
         try:
-            # Create a Reddit instance directly using secrets
             reddit_instance = praw.Reddit(**st.secrets["REDDIT_CONFIG"])
             if reddit_instance and sentiment_pipeline:
                 with st.spinner("Fetching and analyzing latest comments..."):
@@ -78,9 +80,6 @@ if st.session_state.active_tab == "📈 Recent Activity Monitor":
     time.sleep(60)
     st.rerun()
 
-# ==============================================================================
-#                         TAB 2: ON-DEMAND EXPLORER
-# ==============================================================================
 elif st.session_state.active_tab == "📖 On-Demand Explorer":
     st.sidebar.header("On-Demand Analysis")
     st.header("Fetch and Analyze Historical Threads")
@@ -88,7 +87,6 @@ elif st.session_state.active_tab == "📖 On-Demand Explorer":
     if 'on_demand_df' not in st.session_state:
         st.session_state.on_demand_df = None
 
-    # Instantiate the extractor here, passing the secrets
     extractor = ThreadConversationExtractor(st.secrets["REDDIT_CONFIG"])
     
     selected_subreddit = st.sidebar.selectbox("1. Select Subreddit", extractor.target_subreddits)
@@ -96,18 +94,21 @@ elif st.session_state.active_tab == "📖 On-Demand Explorer":
     min_comments = st.sidebar.slider("3. Min Comments per Thread", 5, 30, 5)
     
     if st.sidebar.button("🚀 Fetch & Analyze"):
-        with st.spinner(f"Fetching threads from r/{selected_subreddit}..."):
-            extractor.target_subreddits = [selected_subreddit]
-            total_extracted = extractor.extract_all_subreddits(threads_per_subreddit=num_threads, min_comments=min_comments)
-            if total_extracted > 0:
-                csv_file = extractor.save_to_csv_format()
-                df = pd.read_csv(csv_file)
-                texts = df['text'].dropna().tolist()
-                results = sentiment_pipeline(texts, truncation=True, max_length=256)
-                df.loc[df['text'].notna(), 'predicted_label'] = [res['label'] for res in results]
-                st.session_state.on_demand_df = df
-            else:
-                st.error("Failed to fetch threads.")
+        if sentiment_pipeline:
+            with st.spinner(f"Fetching threads from r/{selected_subreddit}..."):
+                extractor.target_subreddits = [selected_subreddit]
+                total_extracted = extractor.extract_all_subreddits(threads_per_subreddit=num_threads, min_comments=min_comments)
+                if total_extracted > 0:
+                    csv_file = extractor.save_to_csv_format()
+                    df = pd.read_csv(csv_file)
+                    texts = df['text'].dropna().tolist()
+                    results = sentiment_pipeline(texts, truncation=True, max_length=256)
+                    df.loc[df['text'].notna(), 'predicted_label'] = [res['label'] for res in results]
+                    st.session_state.on_demand_df = df
+                else:
+                    st.error("Failed to fetch threads.")
+        else:
+            st.error("Cannot analyze because the custom model failed to load. Check sidebar for details.")
 
     if st.session_state.on_demand_df is not None:
         st.subheader("Analysis Results")
