@@ -64,3 +64,7 @@ mac_commands.txt
 
 # Ignore the data output folder
 data/
+
+# Model and results folders
+my_custom_mental_health_model/
+results/
