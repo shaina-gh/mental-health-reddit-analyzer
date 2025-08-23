@@ -1,38 +1,44 @@
-# Mental Health Reddit Conversation Analyzer
 
-A comprehensive tool for extracting and analyzing mental health discussions from Reddit, focusing on sentiment trajectory analysis through conversation threads.
+# Real-Time & Historical Mental Health Trajectory Analyzer
+
+This is a comprehensive, web-based tool for analyzing mental health discussions on Reddit. It moves beyond simple sentiment analysis by focusing on the **trajectory of conversations**, tracking how sentiment evolves through entire threads. The application features a live monitor for real-time insights and a powerful on-demand explorer for deep-dive historical analysis, all powered by a custom-trained sentiment model.
 
 ## 🎯 Project Overview
 
 This project aims to analyze mental health discussions on Reddit by:
-- Extracting complete conversation threads (not just individual posts)
-- Preserving chronological order of comments
-- Tracking sentiment changes throughout conversations
-- Identifying mental health trajectory patterns in discussions
+
+  - Extracting complete conversation threads (not just individual posts)
+  - Preserving chronological order of comments
+  - Tracking sentiment changes throughout conversations
+  - Identifying mental health trajectory patterns in discussions
 
 ## 🌟 Key Features
 
-- **Thread-Focused Analysis**: Extracts complete conversation threads with chronological ordering
-- **Multi-Subreddit Support**: Monitors 8 mental health subreddits
-- **Sentiment Analysis**: Uses transformer models (RoBERTa-based) for accurate sentiment detection
-- **Real-Time Monitoring**: Optional real-time analysis of new posts
-- **Data Export**: Multiple formats (JSON, CSV) for further analysis
-- **Conversation Trajectory**: Tracks sentiment changes through discussion flow
+  - **🧠 Custom Sentiment Model:** Utilizes a fine-tuned version of `mental-bert`, a language model specifically pre-trained on Reddit mental health data. Our custom model is trained to recognize nuanced categories beyond positive/negative, including `Expressing-Pain`, `Seeking-Support`, `Offering-Support`, and `Expressing-Hope`.
+  - **🔴 Live Monitoring Dashboard:** A real-time web interface that fetches and analyzes the latest comments from mental health subreddits as they happen, providing an up-to-the-second view of community sentiment.
+  - **📖 On-Demand Historical Explorer:** A powerful interactive tool that allows you to:
+      - Select a specific subreddit.
+      - Fetch a user-defined number of threads and comments directly from the UI.
+      - Instantly analyze the sentiment of the fetched data.
+      - Generate conclusive sentiment summaries for entire threads.
+      - Perform drill-down analysis on a single user's comments within a conversation.
+  - **🧵 Thread-Focused Analysis:** The core of this project is its ability to extract and analyze complete, chronologically-ordered conversation threads, revealing the flow and evolution of sentiment.
 
 ## 📊 Target Subreddits
 
-- r/depression
-- r/anxiety  
-- r/mentalhealth
-- r/bipolar
-- r/BipolarReddit
-- r/ptsd
-- r/socialanxiety
-- r/OCD
+  - r/depression
+  - r/anxiety
+  - r/mentalhealth
+  - r/bipolar
+  - r/BipolarReddit
+  - r/ptsd
+  - r/socialanxiety
+  - r/OCD
 
 ## 📈 Data Structure
 
 ### Thread Data Format
+
 ```json
 {
   "thread_id": "abc123",
@@ -57,69 +63,67 @@ This project aims to analyze mental health discussions on Reddit by:
 
 ## 🧠 Sentiment Analysis
 
-The project uses multiple sentiment analysis approaches:
+The project uses a custom-trained sentiment analysis model.
 
-1. **Primary**: `cardiffnlp/twitter-roberta-base-sentiment-latest` (Transformer model)
-2. **Fallback**: TextBlob sentiment analysis
-3. **Custom**: Ready for integration with specialized mental health models
+1.  **Primary**: A fine-tuned `mental/mental-bert-base-uncased` model trained on custom labels (`Expressing-Pain`, `Seeking-Support`, etc.) for nuanced understanding of mental health discussions.
+2.  **Architecture**: The application is a unified Streamlit dashboard, providing both live and historical analysis in a single interface.
 
 ## 📊 Key Metrics
 
-- **Sentiment Distribution**: Positive, Negative, Neutral percentages
-- **Trajectory Analysis**: Improving, Declining, Stable conversation patterns  
-- **Thread Statistics**: Participants, exchanges, duration
-- **Alert System**: Flags concerning content in real-time
+  - **Sentiment Distribution**: Breakdown by custom labels (`Expressing-Pain`, `Expressing-Hope`, etc.).
+  - **Conclusive Thread Sentiment**: An overall summary of a thread's emotional tone (e.g., "Highly Concerning", "Supportive & Improving").
+  - **Single-User Trajectory**: A summary of an individual user's sentiment distribution within a thread.
 
 ## 🔬 Research Applications
 
 This tool is designed for:
-- Mental health research
-- Conversation sentiment trajectory analysis
-- Social media mental health monitoring
-- Academic studies on online support communities
+
+  - Mental health research
+  - Conversation sentiment trajectory analysis
+  - Social media mental health monitoring
+  - Academic studies on online support communities
 
 ## ⚠️ Ethical Considerations
 
-- **Privacy**: No personal information is stored
-- **Research Ethics**: Intended for academic/research purposes
-- **Content Guidelines**: Follows Reddit's API terms of service
-- **Mental Health**: Tool is for research, not clinical diagnosis
+  - **Privacy**: No personal information is stored; data is fetched live or from local files for analysis.
+  - **Research Ethics**: Intended for academic/research purposes.
+  - **Content Guidelines**: Follows Reddit's API terms of service.
+  - **Mental Health**: Tool is for research, not clinical diagnosis.
 
 ## 📋 Requirements
 
-See `requirements.txt` for full list of dependencies:
-- praw (Reddit API)
-- pandas (Data manipulation)
-- numpy (Numerical operations)
-- matplotlib (Visualization)
-- seaborn (Statistical visualization)
-- textblob (Natural language processing)
-- transformers (Advanced sentiment analysis)
-- torch (Machine learning backend)
+See `requirements.txt` for a full list of dependencies, including:
+
+  - praw (Reddit API)
+  - pandas (Data manipulation)
+  - streamlit (Web dashboard)
+  - transformers (Advanced sentiment analysis)
+  - torch (Machine learning backend)
+  - scikit-learn (Model training utilities)
+  - accelerate (Training performance)
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1.  Fork the repository
+2.  Create a feature branch (`git checkout -b feature/amazing-feature`)
+3.  Commit your changes (`git commit -m 'Add amazing feature'`)
+4.  Push to the branch (`git push origin feature/amazing-feature`)
+5.  Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Reddit API for data access
-- Hugging Face for transformer models
-- Mental health communities for their openness in sharing experiences
-- Academic research community for mental health analytics
+  - Reddit API for data access
+  - Hugging Face for the `mental-bert` model and the `transformers` library
+  - The Streamlit team for their excellent dashboarding tool
 
 ## 📞 Contact
 
 For questions about this research project, please open an issue in this repository.
 
----
+-----
 
 **Note**: This tool is for research purposes only and should not be used as a substitute for professional mental health advice or diagnosis.
