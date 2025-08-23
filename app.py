@@ -6,14 +6,13 @@ import os
 import glob
 from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 from thread_conversation_extractor import ThreadConversationExtractor
-from config import REDDIT_CONFIG
+# NO MORE "from config import REDDIT_CONFIG"
 
-# --- Page Configuration ---
 st.set_page_config(page_title="Mental Health Analyzer", layout="wide")
 
-# --- Model & Extractor Loading (with caching for performance) ---
 @st.cache_resource
 def load_sentiment_model():
+    # ... (this function remains the same)
     model_path = "./my_custom_mental_health_model"
     if not os.path.exists(model_path): return None
     try:
@@ -24,16 +23,14 @@ def load_sentiment_model():
         st.sidebar.error(f"Error loading model: {e}")
         return None
 
+# MODIFICATION: Pass secrets to the extractor instance
 @st.cache_resource
-def get_reddit_instance():
-    try:
-        return praw.Reddit(**REDDIT_CONFIG)
-    except Exception as e:
-        st.error(f"Failed to connect to Reddit: {e}")
-        return None
+def get_extractor():
+    # Pass the secrets directly when creating the instance
+    return ThreadConversationExtractor(st.secrets["REDDIT_CONFIG"])
 
 sentiment_pipeline = load_sentiment_model()
-reddit = get_reddit_instance()
+extractor = get_extractor()
 
 # --- Main App Structure ---
 st.title("🧠 Mental Health Reddit Analyzer")
